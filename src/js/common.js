@@ -29,14 +29,15 @@ function getAuthUser(username, password) {
     // To Substring username and password on Server
     var pattern = '5$ZxCvbDk$l3';
     var info = username + pattern + password;
+    var result = [];
     if(portServer != null) {
         console.log('test js common: ' + info);
-        let res = axios.get("http://localhost:" + portServer + "/auth/" + info)
-        // .then(x => {
-        //     return x;
-        // });
-        console.log(res);
-        return res;
+        axios.get("http://localhost:" + portServer + "/auth/" + info)
+        .then(x => {
+            result.push(x.data);
+            console.log(JSON.parse(x.data));
+        });
+        return result;
     }
     return;
 }

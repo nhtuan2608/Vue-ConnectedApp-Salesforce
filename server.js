@@ -6,7 +6,7 @@ const app = express()
 
 var corsOptions = {
     origin: 'http://localhost:8080',
-    optionsSuccessStatus: 200 // For legacy browser support
+	optionsSuccessStatus: 200, // For legacy browser support
 }
 
 app.use(cors(corsOptions));
@@ -45,7 +45,12 @@ var oauth2 = new jsforce.OAuth2({
   // Get authorization url and redirect to it.
   //
 //   http://localhost:9090/oauth2/auth
-app.get('/oauth2/auth', function(req, res) {
+app.get('/oauth2/auth', function(req, res, err) {
+	// if(err) {
+  	// 	res.send('Session or accesss token is expired');
+	// } else {
+		
+	// }
 	isAuthorized(res);
 });
 
@@ -81,18 +86,19 @@ app.get('/auth/:info', (req, res) => {
 	  if (err) { return console.error(err); }
 	  console.log(result);
 	  console.log("fetched : " + result.records.length);
-	  console.log("records : " + result.records);
-	  if(username == result.records[0].username__c) {
+	//   console.log("records : " + result.records);
+	  if(result.records.length > 0 && username == result.records[0].username__c) {
 		  isValid = true;
 		  console.log('isValid: ' + isValid);
 		  console.log('isValid: ' + result.records[0].password__c);
 	  }
+
+	  	if(isValid) {
+			res.send('Success');
+		} else {
+			res.send('Access denied');
+		}
 	});
-	if(isValid) {
-		res.send('Success');
-	} else {
-		res.send('Access denied');
-	}
   });
 
   function openConnection(url, token) {

@@ -1,7 +1,11 @@
 <template>
     <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material.jpg" style="height: 100%;">
+        
         <v-card elevation="14" outlined shaped style="width: 50%">
+            
             <v-card-title>Welcome To Đào Qua Đảo</v-card-title>
+            <v-alert type="error" v-if="errMessage[0] == 'Access denied'">{{errMessage}}</v-alert>
+            <v-alert type="success" v-if="errMessage[0] == 'Success'">Logging in.....</v-alert>
             <v-card-text>
                 <v-form>
                     <v-container>
@@ -43,6 +47,8 @@ export default {
     return {
       name: '',
       password: '',
+      errMessage: '',
+      isErr: false,
     }
   },
   props: {
@@ -55,7 +61,12 @@ export default {
       // setInterval(()=>{
       //   console.log(data);
       // }, 1000);
-      console.log(data);
+      // if(data.length > 0) {
+        this.errMessage = data;
+      // }
+      if(this.errMessage) {
+        this.isErr = true;
+      }
       alert('Hello ' + this.name + this.password +'!');
       
       // `event` is the native DOM event
