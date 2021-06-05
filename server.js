@@ -6,7 +6,7 @@ const app = express()
 
 var corsOptions = {
     origin: 'http://localhost:8080',
-	optionsSuccessStatus: 200, // For legacy browser support
+  optionsSuccessStatus: 200, // For legacy browser support
 }
 
 app.use(cors(corsOptions));
@@ -18,7 +18,10 @@ app.listen(PORT, () => {
 
 // Salesforce
 var username = 'celorust@gmail.com';
-var password = 'ngTuan2020';
+var password = 'zhouyu26081996@';
+var username = 'adminPage_celorust@gmail.com';
+var password = 'sfAdmin2021!';
+
 var accessToken = '';
 var instanceUrl = '';
 // Pattern split username and password common.js Vue
@@ -35,38 +38,38 @@ const params = {
 
 //
 var oauth2 = new jsforce.OAuth2({
-	// you can change loginUrl to connect to sandbox or prerelease env.
-	// loginUrl : 'https://test.salesforce.com',
-	clientId : params.client_id,
-	clientSecret : params.client_secret,
-	redirectUri : params.redirect_uri,
+  // you can change loginUrl to connect to sandbox or prerelease env.
+  // loginUrl : 'https://test.salesforce.com',
+  clientId : params.client_id,
+  clientSecret : params.client_secret,
+  redirectUri : params.redirect_uri,
 });
-  //
-  // Get authorization url and redirect to it.
-  //
+//
+// Get authorization url and redirect to it.
+//
 //   http://localhost:9090/oauth2/auth
-app.get('/oauth2/auth', function(req, res, err) {
-	// if(err) {
-  	// 	res.send('Session or accesss token is expired');
-	// } else {
-		
-	// }
-	isAuthorized(res);
+app.get(['/oauth2/auth','/'], function(req, res, err) {
+  // if(err) {
+    // 	res.send('Session or accesss token is expired');
+  // } else {
+    
+  // }
+  isAuthorized(res);
 });
 
 app.get('/oauth2/success', function(req, res) {
-	var authConn = new jsforce.Connection({ oauth2 });
-	authConn.authorize(req.query.code, function (err, userInfo) {
-		accessToken = authConn.accessToken;
-		instanceUrl = authConn.instanceUrl;
-		res.cookie('sf_token', authConn.accessToken);
+  var authConn = new jsforce.Connection({ oauth2 });
+  authConn.authorize(req.query.code, function (err, userInfo) {
+    accessToken = authConn.accessToken;
+    instanceUrl = authConn.instanceUrl;
+    res.cookie('sf_token', authConn.accessToken);
         res.cookie('port', PORT);
-		res.redirect('http://localhost:8080/');
-		console.log('Authorized to SF');
-		// res.send(200);
-	});
-	
-	// console.log('token $$$$: ' + this.accessToken);
+    res.redirect('http://localhost:8080/');
+    console.log('Authorized to SF');
+    // res.send(200);
+  });
+  
+  // console.log('token $$$$: ' + this.accessToken);
     // res.send('ADASSDSA');
 });
 
@@ -82,12 +85,16 @@ app.get('/auth/:info', (req, res) => {
 	console.log(password);
 	var conn = openConnection(instanceUrl, accessToken);
 	var isValid = false;
-	conn.query("SELECT Id, Name, password__c, username__c, email__c FROM Account WHERE username__c = '" + username + "'" , function(err, result) {
-	  if (err) { return console.error(err); }
+	conn.query("SELECT Id, Name, password__c, username__c, email__c FROM Account WHERE username__c = '" + username + "' AND password__c = '" + password + "'", function(err, result) {
+	  	if (err) {
+			// isValid = true
+		//   return console.error(err);
+			res.send('Access denied');
+		}
 	  console.log(result);
 	  console.log("fetched : " + result.records.length);
 	//   console.log("records : " + result.records);
-	  if(result.records.length > 0 && username == result.records[0].username__c) {
+	  if(result.records.length > 0) {
 		  isValid = true;
 		  console.log('isValid: ' + isValid);
 		  console.log('isValid: ' + result.records[0].password__c);
