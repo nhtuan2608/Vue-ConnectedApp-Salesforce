@@ -17,6 +17,7 @@ function getCookie(cookie, cname) {
     }
     return null;
 }
+
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -24,19 +25,33 @@ function setCookie(cname, cvalue, exdays) {
     document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 
+function checkUser(username, password) {
+    if(!username || !password) {
+        return true;
+    }
+    return false;
+}
+
 function getAuthUser(username, password) {
     var portServer = localStorage.getItem("portServer");
     // To Substring username and password on Server
     var pattern = '5$ZxCvbDk$l3';
     var info = username + pattern + password;
+    console.log('test js common: ' + info);
     var result = [];
     if(portServer != null) {
-        console.log('test js common: ' + info);
-        axios.get("http://localhost:" + portServer + "/auth/" + info)
-        .then(x => {
+        axios.get("http://localhost:" + portServer + "/auth/" + info).then(x => {
             result.push(x.data);
             // console.log(JSON.parse(x.data));
         });
+        // .catch(error => {
+        //     // if (error.response.status === 401) {
+        //     //     console.log('unauthorized, logging out ...');
+        //     //     // auth.logout();
+        //     //     // router.replace('/auth/login');
+        //     // }
+        //     // return Promise.reject(error.response);
+        // });
         return result;
     }
     return;
@@ -69,4 +84,4 @@ function getAuthUser(username, password) {
 //     }
 // }
 
-export { setCookie, getAuthUser, getCookie };
+export { setCookie, getAuthUser, getCookie, checkUser };

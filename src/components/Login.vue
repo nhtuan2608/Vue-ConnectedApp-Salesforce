@@ -24,6 +24,7 @@
                                   id="nameText"
                                   v-model="username"
                                   v-bind:disabled="isLoading"
+                                  @input="checkInput()"
                               ></v-text-field>
                           </v-row>
                           <v-row cols="6" sm="4">
@@ -34,10 +35,13 @@
                                   id="pwdText"
                                   v-model="password"
                                   v-bind:disabled="isLoading"
+                                  @input="checkInput()"
                               ></v-text-field>
                           </v-row>
                           <v-row style="margin-top: 20px;">
-                            <v-btn @click="login()" depressed color="primary" rounded v-bind:loading="isLoading">
+                            <v-btn @click="login()" depressed color="primary" rounded 
+                                v-bind:loading="isLoading"
+                                v-bind:disabled="!isInputed">
                               {{btnTitle}}
                             </v-btn>
                           </v-row>
@@ -51,7 +55,7 @@
 </template>
 
 <script>
-import { getAuthUser } from '../js/common';
+import { getAuthUser, checkUser } from '../js/common';
 export default {
   
   name: 'Login',
@@ -65,32 +69,38 @@ export default {
       errMessage: '',
       isErr: false,
       isLoading: false,
-      btnTitle: 'Login'
+      btnTitle: 'Login',
+      isInputed: false
     }
   },
   props: {
     msg: String
   },
   methods: {
+    checkInput: function() {
+      var hasInputed = checkUser(this.username, this.password);
+      this.isInputed = !hasInputed;
+    },
     login: function (event) {
       this.isLoading = true;
-      // `this` inside methods points to the Vue instance
-      var data = getAuthUser(this.username, this.password);
-      this.errMessage = data;
+      if(this.isInputed) {
+        // `this` inside methods points to the Vue instance
+        var data = getAuthUser(this.username, this.password);
+        this.errMessage = data;
 
-      if(!this.errMessage) {
-        this.isErr = true;
-        alert('Error fetch data!');
-        return false;
-      } 
-      else {
-        // alert('Hello ' + this.name + this.password +'!');
-        setInterval(() => {
-          this.isLoading = false;
+        if(!this.errMessage) {
+          this.isErr = true;
+          alert('Error fetch data!');
           return false;
-        }, 2000);
+        } 
+        else {
+          // alert('Hello ' + this.name + this.password +'!');
+          setInterval(() => {
+            this.isLoading = false;
+            return false;
+          }, 2000);
+        }
       }
-      
       // `event` is the native DOM event
       if (event) {
         alert(event.target.tagName);
