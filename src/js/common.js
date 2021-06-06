@@ -34,10 +34,8 @@ function getAuthUser(username, password) {
         console.log('test js common: ' + info);
         axios.get("http://localhost:" + portServer + "/auth/" + info)
         .then(x => {
-            if(x.data) {
-                result.push(x.data);
-                console.log(JSON.parse(x.data));
-            }
+            result.push(x.data);
+            // console.log(JSON.parse(x.data));
         });
         return result;
     }
